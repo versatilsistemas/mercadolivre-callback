@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Autenticação ML</title>
+</head>
+<body>
+    <h2>Autenticação Mercado Livre</h2>
+    <div id="resultado"></div>
+
+    <script>
+        // Pega o code da URL
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const error = params.get('error');
+
+        if (code) {
+            document.getElementById('resultado').innerHTML = `
+                <p>✅ Code obtido com sucesso!</p>
+                <p><strong>Cole esse código no integrador:</strong></p>
+                <h2 style="background:#f0f0f0; padding:10px;">${code}</h2>
+                <button onclick="navigator.clipboard.writeText('${code}')">
+                    Copiar Code
+                </button>
+            `;
+        } else if (error) {
+            document.getElementById('resultado').innerHTML = `
+                <p>❌ Erro: ${error}</p>
+            `;
+        } else {
+            document.getElementById('resultado').innerHTML = `
+                <p>⚠️ Nenhum code encontrado.</p>
+            `;
+        }
+    </script>
+</body>
+</html>
