@@ -4,27 +4,30 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ML Callback</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f9f9f8;
-      --surface: #ffffff;
-      --border: #e8e8e5;
-      --text: #1a1a18;
-      --muted: #9a9a94;
-      --yellow: #f5c800;
-      --green: #2d8a4e;
-      --green-bg: #f0faf4;
-      --red: #c0392b;
-      --red-bg: #fdf3f2;
-      --blue: #1a5fa8;
-      --blue-bg: #f0f6ff;
-      --orange: #c46b00;
-      --orange-bg: #fff8ef;
-      --mono: 'DM Mono', monospace;
-      --sans: 'DM Sans', sans-serif;
+      --bg:         #fafaf9;
+      --surface:    #ffffff;
+      --border:     #ebebea;
+      --text:       #18181b;
+      --sub:        #71717a;
+      --hint:       #a1a1aa;
+      --green:      #16a34a;
+      --green-bg:   #f0fdf4;
+      --green-bd:   #bbf7d0;
+      --red:        #dc2626;
+      --red-bg:     #fef2f2;
+      --red-bd:     #fecaca;
+      --blue:       #2563eb;
+      --blue-bg:    #eff6ff;
+      --orange:     #c2410c;
+      --orange-bg:  #fff7ed;
+      --mono:       'JetBrains Mono', monospace;
+      --sans:       'Inter', sans-serif;
+      --radius:     10px;
     }
 
     body {
@@ -36,187 +39,297 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px 24px;
+      padding: 48px 24px;
     }
 
-    .wrap { width: 100%; max-width: 520px; }
+    .wrap {
+      width: 100%;
+      max-width: 480px;
+    }
 
-    .topbar {
+    /* ── Logo splash ── */
+    .logo-splash {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 28px;
+      gap: 10px;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeIn 0.5s ease 0.05s forwards;
     }
 
-    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo-splash img {
+      height: 28px;
+      display: block;
+    }
 
-    .ml-dot {
-      width: 28px; height: 28px;
-      background: var(--yellow);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
+    .splash-sep {
+      width: 1px;
+      height: 18px;
+      background: var(--border);
+    }
+
+    .splash-label {
+      font-size: 12px;
+      color: var(--hint);
       font-family: var(--mono);
-      font-size: 10px; font-weight: 500; color: #000;
+      letter-spacing: 0.5px;
     }
 
-    .brand-name { font-size: 13px; font-weight: 500; letter-spacing: -0.2px; }
-
-    .timestamp { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-
+    /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 32px;
-      margin-bottom: 12px;
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.2s forwards;
     }
 
-    .status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
-
-    .status-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 500;
-      padding: 3px 10px; border-radius: 20px;
-      font-family: var(--mono); letter-spacing: 0.2px;
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 99px;
+      letter-spacing: 0.3px;
+      margin-bottom: 18px;
     }
 
-    .badge-ok   { background: var(--green-bg); color: var(--green); }
-    .badge-err  { background: var(--red-bg);   color: var(--red); }
-    .badge-wait { background: #f5f5f3;          color: var(--muted); }
+    .pill-ok   { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-bd); }
+    .pill-err  { background: var(--red-bg);    color: var(--red);   border: 1px solid var(--red-bd); }
+    .pill-wait { background: var(--bg);        color: var(--hint);  border: 1px solid var(--border); }
 
-    .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
-    .card-title { font-size: 20px; font-weight: 500; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .card-title {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.4px;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
 
-    .card-sub { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+    .card-sub {
+      font-size: 13px;
+      color: var(--sub);
+      line-height: 1.65;
+      margin-bottom: 22px;
+    }
 
     .field-label {
-      font-family: var(--mono); font-size: 10px; color: var(--muted);
-      letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--hint);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
     }
 
-    .code-field {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-      padding: 12px 14px; font-family: var(--mono); font-size: 12px;
-      color: var(--text); word-break: break-all; line-height: 1.7; margin-bottom: 12px;
+    .code-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 11px 13px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.7;
+      margin-bottom: 10px;
     }
 
-    .btn {
-      width: 100%; background: var(--text); color: #fff; border: none;
-      border-radius: 8px; padding: 12px; font-family: var(--sans);
-      font-size: 13px; font-weight: 500; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 7px;
-      transition: opacity 0.15s; letter-spacing: -0.1px;
+    .btn-copy {
+      width: 100%;
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 11px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      letter-spacing: -0.1px;
+      transition: opacity 0.15s;
     }
 
-    .btn:hover { opacity: 0.82; }
-    .btn:active { opacity: 0.7; }
-    .btn svg { width: 14px; height: 14px; }
+    .btn-copy:hover  { opacity: 0.8; }
+    .btn-copy:active { opacity: 0.65; }
+    .btn-copy svg { width: 13px; height: 13px; flex-shrink: 0; }
 
     .note {
-      margin-top: 14px; font-size: 12px; color: var(--muted); line-height: 1.6;
-      padding: 10px 14px; background: var(--bg); border-radius: 7px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--hint);
+      line-height: 1.6;
+      padding: 9px 12px;
+      background: var(--bg);
+      border-radius: 6px;
     }
 
-    .note strong { color: var(--text); font-weight: 500; }
+    .note b { color: var(--sub); font-weight: 500; }
 
-    .error-field {
-      background: var(--red-bg); border: 1px solid #f5c8c5; border-radius: 8px;
-      padding: 12px 14px; font-family: var(--mono); font-size: 12px; color: var(--red);
+    .error-box {
+      background: var(--red-bg);
+      border: 1px solid var(--red-bd);
+      border-radius: 7px;
+      padding: 11px 13px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--red);
     }
 
+    /* ── Log ── */
     .log-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.35s forwards;
     }
 
     .log-head {
-      padding: 10px 16px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 7px;
-      font-family: var(--mono); font-size: 10px; color: var(--muted);
-      letter-spacing: 0.8px; text-transform: uppercase;
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--hint);
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .live-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--green); animation: blink 2s infinite;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: blink 2.2s infinite;
     }
 
     .log-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 16px; font-family: var(--mono); font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 14px;
+      font-family: var(--mono);
+      font-size: 10.5px;
       border-bottom: 1px solid var(--border);
     }
 
     .log-row:last-child { border-bottom: none; }
 
-    .method-tag {
-      font-size: 10px; font-weight: 500; padding: 2px 7px;
-      border-radius: 4px; min-width: 38px; text-align: center; letter-spacing: 0.3px;
+    .mtag {
+      font-size: 9px;
+      font-weight: 500;
+      padding: 2px 6px;
+      border-radius: 4px;
+      min-width: 34px;
+      text-align: center;
+      letter-spacing: 0.4px;
     }
 
-    .m-get    { background: var(--blue-bg);   color: var(--blue); }
-    .m-post   { background: var(--green-bg);  color: var(--green); }
-    .m-put    { background: var(--orange-bg); color: var(--orange); }
+    .m-get  { background: var(--blue-bg);   color: var(--blue); }
+    .m-post { background: var(--green-bg);  color: var(--green); }
+    .m-put  { background: var(--orange-bg); color: var(--orange); }
 
-    .log-url {
-      flex: 1; color: var(--muted); overflow: hidden;
-      text-overflow: ellipsis; white-space: nowrap; font-size: 10px;
+    .lurl {
+      flex: 1;
+      color: var(--hint);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 10px;
     }
 
-    .s-ok   { color: var(--green); font-size: 10px; }
-    .s-err  { color: var(--red);   font-size: 10px; }
-    .s-pend { color: var(--muted); font-size: 10px; }
-
-    .log-time { color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .s-ok   { color: var(--green);  font-size: 10px; }
+    .s-err  { color: var(--red);    font-size: 10px; }
+    .s-pend { color: var(--hint);   font-size: 10px; }
+    .ltime  { color: var(--hint);   font-size: 10px; white-space: nowrap; }
 
     .origin-row {
-      padding: 8px 16px; border-top: 1px solid var(--border);
-      font-family: var(--mono); font-size: 10px; color: var(--muted);
-      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--hint);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .origin-label { color: var(--text); font-weight: 500; }
+    .origin-key { color: var(--sub); font-weight: 500; }
 
+    /* ── Footer ── */
     .footer {
-      text-align: center; margin-top: 20px;
-      font-size: 11px; color: var(--muted); font-family: var(--mono);
+      text-align: center;
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--hint);
+      opacity: 0;
+      animation: fadeIn 0.4s ease 0.5s forwards;
     }
 
+    /* ── Toast ── */
     .toast {
-      position: fixed; bottom: 28px; right: 28px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px 16px;
-      display: flex; align-items: center; gap: 10px;
-      font-size: 13px; box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-      transform: translateY(12px); opacity: 0;
-      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      pointer-events: none; z-index: 99;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      transform: translateY(10px);
+      opacity: 0;
+      transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none;
+      z-index: 99;
     }
 
     .toast.show { transform: translateY(0); opacity: 1; }
 
     .toast-icon {
-      width: 20px; height: 20px; background: var(--green-bg);
-      border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; color: var(--green); font-size: 11px; flex-shrink: 0;
+      width: 18px; height: 18px;
+      background: var(--green-bg);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--green); font-size: 10px; flex-shrink: 0;
     }
 
-    .toast-text { font-size: 13px; font-weight: 500; color: var(--text); }
-    .toast-sub  { font-size: 11px; color: var(--muted); }
+    .toast-main { font-size: 13px; font-weight: 500; color: var(--text); }
+    .toast-hint { font-size: 11px; color: var(--hint); }
 
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+    /* ── Animations ── */
+    @keyframes fadeIn  { to { opacity: 1; } }
+    @keyframes fadeUp  { to { opacity: 1; transform: translateY(0); } }
+    .card, .log-card   { transform: translateY(8px); }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
   </style>
 </head>
 <body>
   <div class="wrap">
 
-    <div class="topbar">
-      <div class="brand">
-        <div class="ml-dot">ML</div>
-        <span class="brand-name">Auth Callback</span>
-      </div>
-      <span class="timestamp" id="ts"></span>
+    <div class="logo-splash">
+      <img src="https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/6.6.92/mercadolibre/logo__large_plus@2x.png" alt="Mercado Livre"/>
+      <div class="splash-sep"></div>
+      <span class="splash-label">oauth callback</span>
     </div>
 
     <div class="card" id="card"></div>
@@ -228,19 +341,19 @@
       </div>
       <div id="log-rows"></div>
       <div class="origin-row">
-        <span class="origin-label">origin</span>
+        <span class="origin-key">origin</span>
         <span id="origin-url"></span>
       </div>
     </div>
 
-    <div class="footer">Integrador ML &mdash; OAuth Callback</div>
+    <div class="footer">Integrador ML &mdash; OAuth 2.0 Callback</div>
   </div>
 
   <div class="toast" id="toast">
     <div class="toast-icon">✓</div>
     <div>
-      <div class="toast-text">Copiado!</div>
-      <div class="toast-sub">Code na área de transferência</div>
+      <div class="toast-main">Copiado!</div>
+      <div class="toast-hint">Code na área de transferência</div>
     </div>
   </div>
 
@@ -251,73 +364,66 @@
     const card    = document.getElementById('card');
     const now     = new Date();
     const timeStr = now.toLocaleTimeString('pt-BR');
+    const dot     = document.getElementById('live-dot');
 
-    document.getElementById('ts').textContent = now.toLocaleString('pt-BR');
-    document.getElementById('origin-url').textContent = window.location.origin + window.location.pathname;
-
-    const dot = document.getElementById('live-dot');
+    document.getElementById('origin-url').textContent =
+      window.location.origin + window.location.pathname;
 
     if (code) {
-      dot.style.background = '#2d8a4e';
+      dot.style.background = 'var(--green)';
       card.innerHTML = `
-        <div class="status-row">
-          <span class="status-badge badge-ok"><span class="badge-dot"></span>autorizado</span>
-        </div>
+        <div class="status-pill pill-ok"><span class="pill-dot"></span>autorizado</div>
         <div class="card-title">Code recebido</div>
         <p class="card-sub">O Mercado Livre retornou o código de autorização.<br>Cole-o no integrador para concluir.</p>
         <div class="field-label">Authorization Code</div>
-        <div class="code-field">${code}</div>
-        <button class="btn" onclick="copiar()">
+        <div class="code-box">${code}</div>
+        <button class="btn-copy" onclick="copiar()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2"/>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
           </svg>
           Copiar code
         </button>
-        <div class="note"><strong>Atenção:</strong> este code expira em minutos. Cole imediatamente no integrador.</div>
+        <div class="note"><b>Atenção:</b> este code expira em minutos. Cole imediatamente no integrador.</div>
       `;
       addLog('GET', window.location.href, '200', 'ok');
       addLog('GET', 'https://auth.mercadolivre.com.br/authorization?...', '302', 'ok');
       navigator.clipboard.writeText(code).then(showToast).catch(() => {});
 
     } else if (error) {
-      dot.style.background = '#c0392b';
+      dot.style.background = 'var(--red)';
       dot.style.animation  = 'none';
       card.innerHTML = `
-        <div class="status-row">
-          <span class="status-badge badge-err"><span class="badge-dot"></span>erro</span>
-        </div>
+        <div class="status-pill pill-err"><span class="pill-dot"></span>erro</div>
         <div class="card-title">Falha na autenticação</div>
         <p class="card-sub">O Mercado Livre retornou um erro durante a autorização.</p>
         <div class="field-label">Erro</div>
-        <div class="error-field">${error}</div>
+        <div class="error-box">${error}</div>
       `;
       addLog('GET', window.location.href, '400', 'err');
 
     } else {
-      dot.style.background = '#9a9a94';
+      dot.style.background = 'var(--hint)';
       dot.style.animation  = 'none';
       card.innerHTML = `
-        <div class="status-row">
-          <span class="status-badge badge-wait"><span class="badge-dot"></span>aguardando</span>
-        </div>
+        <div class="status-pill pill-wait"><span class="pill-dot"></span>aguardando</div>
         <div class="card-title">Nenhum code recebido</div>
         <p class="card-sub">Esta página deve ser acessada via fluxo OAuth do integrador.</p>
-        <div class="note">Clique em <strong>"Autenticar com Mercado Livre"</strong> no integrador para iniciar.</div>
+        <div class="note">Clique em <b>"Autenticar com Mercado Livre"</b> no integrador para iniciar.</div>
       `;
       addLog('GET', window.location.href, '—', 'pend');
     }
 
     function addLog(method, url, status, type) {
-      const mClass = { GET: 'm-get', POST: 'm-post', PUT: 'm-put' }[method] || 'm-get';
-      const sClass = { ok: 's-ok', err: 's-err', pend: 's-pend' }[type];
+      const mc = { GET: 'm-get', POST: 'm-post', PUT: 'm-put' }[method] || 'm-get';
+      const sc = { ok: 's-ok', err: 's-err', pend: 's-pend' }[type];
       const row = document.createElement('div');
       row.className = 'log-row';
       row.innerHTML = `
-        <span class="method-tag ${mClass}">${method}</span>
-        <span class="log-url" title="${url}">${url}</span>
-        <span class="${sClass}">${status}</span>
-        <span class="log-time">${timeStr}</span>
+        <span class="mtag ${mc}">${method}</span>
+        <span class="lurl" title="${url}">${url}</span>
+        <span class="${sc}">${status}</span>
+        <span class="ltime">${timeStr}</span>
       `;
       document.getElementById('log-rows').appendChild(row);
     }
